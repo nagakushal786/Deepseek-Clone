@@ -1,8 +1,15 @@
 import { assets } from '@/assets/assets';
 import Image from 'next/image';
-import React from 'react'
+import React, { useState } from 'react';
+import { useClerk, UserButton } from '@clerk/nextjs';
+import { useAppContext } from '@/context/AppContext';
+import ChatLabel from './ChatLabel';
 
 const SideBar = ({expand, setExpand}) => {
+  const {openSignIn}=useClerk();
+  const {user}=useAppContext();
+  const [openMenu, setOpenMenu]=useState({id: 0, open: false});
+
   return (
     <div className={`flex flex-col justify-between bg-[#212327] pt-7 transition-all z-50 max-md:absolute max-md:h-screen ${expand ? 'p-4 w-64' : 'md:w-20 w-0 max-md:overflow-hidden'}`}>
       <div>
@@ -35,14 +42,14 @@ const SideBar = ({expand, setExpand}) => {
 
         <div className={`mt-8 text-white/25 text-sm ${expand ? 'block' : 'hidden'}`}>
           <p className='my-1'>Recents</p>
-          {/* chat label */}
+          <ChatLabel openMenu={openMenu} setOpenMenu={setOpenMenu}/>
         </div>
       </div>
 
       <div>
-        <div>
+        <div className={`flex items-center cursor-pointer mb-3 group relative ${expand ? 'gap-1 text-white/80 text-sm p-2.5 border border-primary rounded-lg hover:bg-white/10 cursor-pointer' : 'h-10 w-10 mx-auto hover:bg-gray-500/30 rounded-lg'}`}>
           <Image className={expand ? 'w-5' : 'w-6.5 mx-auto'} src={expand ? assets.phone_icon : assets.phone_icon_dull} alt=''/>
-          <div>
+          <div className={`absolute -top-60 pb-8 ${!expand && '-right-40'} opacity-0 group-hover:opacity-100 hidden group-hover:block transition`}>
             <div className='relative w-max bg-black text-white text-sm p-3 rounded-lg shadow-lg'>
               <Image className='w-44' src={assets.qrcode} alt=''/>
               <p>Scan to get DeepSeek App</p>
@@ -53,6 +60,17 @@ const SideBar = ({expand, setExpand}) => {
             expand && <>
               <span>Get App</span> <Image src={assets.new_icon} alt=''/>
             </>
+          }
+        </div>
+
+        <div onClick={user ? null : openSignIn} className={`flex items-center ${expand ? 'hover:bg-white/10 rounded-lg' : 'justify-center w-full'} gap-3 text-white/60 text-sm p-2 mt-1 mb-3 cursor-pointer`}>
+          {
+            user
+            ? <UserButton/>
+            : <Image className='w-7' src={assets.profile_icon} alt=''/>
+          }
+          {
+            expand && <span>My Profile</span>
           }
         </div>
       </div>
