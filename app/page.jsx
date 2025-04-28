@@ -1,6 +1,7 @@
 'use client';
 
 import { assets } from "@/assets/assets";
+import Message from "@/components/Message";
 import PromptBox from "@/components/PromptBox";
 import SideBar from "@/components/SideBar";
 import Image from "next/image";
@@ -33,7 +34,9 @@ export default function Home() {
               </>
             )
             : (
-              <div></div>
+              <div className="mx-auto">
+                <Message role='user' content='What is NextJS?'/>
+              </div>
             )
           }
 
